@@ -1,0 +1,252 @@
+{% extends 'NewscoopNewscoopBundle::admin_layout.html.twig' %}
+
+{% block admin_title %}{{ parent() }} - Airtime Admin{% endblock %}
+{% block admin_page_title_content %}Airtime Admin{% endblock %}
+
+{% block admin_stylesheets %}
+<link rel="stylesheet" href="{{ asset('/bundles/newscoopairtimeplugin/css/backend.css') }}">
+{% endblock %}
+
+{% block admin_scripts %}
+<script src="{{ asset('/js/select2/select2.js') }}"></script>
+{% endblock %}
+
+{% block admin_content %}
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Instance Settings</a></li>
+            <li><a href="#tabs-2">Show Settings</a></li>
+            <li><a href="#tabs-3">Track Settings</a></li>
+        </ul>
+
+        <div id="tabs-1" class="tab-container">
+
+            <h4>Add an Instance</h4>
+
+            <div>
+                <span><label for="name">Name:</label>
+                  <input type="text" id="name" value="">
+                </span>
+                <span><label for="url">Url:</label>
+                  <input type="text" id="url" size="60" value="">
+                </span>
+                <span><label for="apikey">Api Key:</label>
+                  <input type="text" id="apikey" size="60" value="">
+                </span>
+                <span>
+                    <button id="add-instance">Add</button>
+                </span>
+            </div>
+            
+            <h4>Saved Instances</h4>
+
+            <div id='airtime-instances-container'>
+                <table id='airtime-instances-table' class='table table-bordered table-hover'>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Url</th>
+                            <th>Api Key</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    {% for instance in instances %}
+                        <tr>
+                            <td>{{ instance.name }}</td>
+                            <td>{{ instance.url }}</td>
+                            <td>{{ instance.apikey }}</td>
+                            <td>
+                                <button class='remove-instance' data-id='{{ instance.id }}'>Remove</button>
+                                {% if instance.id != default_instance_id %}
+                                    <button class='default-instance' data-id='{{ instance.id }}'>Make Default</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    
+                </table>
+            </div>
+        </div> <!-- end tabs-1 div -->
+
+        <div id="tabs-2" class="tab-container">
+
+            <h4>Sync Shows</h4>
+            <div id="show-sync-container">
+                <input value="OFF" name="sync-shows" type="radio" class="sync-shows-switch" 
+                    {% if sync_shows_pref == "OFF" %} checked {% endif %}>
+                <label for="show-sync-off"> OFF</label>
+                <input value="ON" name="sync-shows" type="radio" class="sync-shows-switch" 
+                    {% if sync_shows_pref == "ON" %} checked {% endif %}>
+                <label for="show-sync-on"> ON</label>
+
+                <label for="show-sync">This option allows you to automatically sync shows added on your airtime instances to this Newscoop instance.  This means that your airtime/shows.tpl file will automically include any new shows created on your Airtime instance without any additional actions.  If you turn this feature off you will have to add shows to this template manually using the smarty block function <i>list_airtime_shows</i>.</label>
+            </div>
+
+            <h4>Default Schedule Display</h4>
+            <div>
+                <label>Back</label>
+                <input id="back-value" type="text" size="5" value="{{ airtime_back_date|number_format }}">
+                <select id="back-interval">
+                    <option value="D" {% if airtime_back_date|last == "D" %} selected {% endif %}>days</option>
+                    <option value="M" {% if airtime_back_date|last == "M" %} selected {% endif %}>months</option>
+                </select>
+
+                <label>Forward</label>
+                <input id="forward-value" type="text" size="5" value="{{ airtime_forward_date|number_format }}">
+                <select id="forward-interval">
+                    <option value="D" {% if airtime_forward_date|last == "D" %} selected {% endif %}>days</option>
+                    <option value="M" {% if airtime_forward_date|last == "M" %} selected {% endif %}>months</option>
+                </select>
+
+                <button id="schedule-display-update">Update</button>
+            </div>
+
+            <h4>Shows</h4>
+            <div id='airtime-show-container'>
+                <table id='airtime-show-table' class='table table-bordered table-hover'>
+                    <thead>
+                        <tr>
+                            <th>Airtime Instance</th>
+                            <th>Show Id*</th>
+                            <th>Name*</th>
+                            <th>Genre*</th>
+                            <th>Description*</th>
+                            <th>Url*</th>
+                            <th>Image</th>
+                            <th>Tools</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for show in shows %}
+                        <tr>
+                            <td>{{ show.airtime_instance }}</td>
+                            <td>{{ show.id }}</td>
+                            <td>{{ show.name }}</td>
+                            <td>{{ show.genre }}</td>
+                            <td>{{ show.description }}</td>
+                            <td>{{ show.url }}</td>
+                            <td></td>
+                            <td>
+                                <button class='hide-show' data-id='{{ show.airtime_instance }}-{{ show.id }}'>Hide</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p>(*) These values are defined in the specified Airtime instance</p>
+        </div>
+
+        <div id="tabs-3" class="tab-container">
+            <h4>Allow archived show playback?</h4>
+        </div>
+
+    </div><!-- end tabs -->
+
+</div>
+
+<script type="text/javascript">
+$(function() {
+
+    // initiate tabs
+    $('#tabs').tabs();
+
+    // update default schedule display dates
+    $('#schedule-display-update').live('click', function() {
+        var backValue = $("#back-value").val(); 
+        var backInterval = $("#back-interval").val(); 
+        var forwardValue = $("#forward-value").val(); 
+        var forwardInterval = $("#forward-interval").val(); 
+
+        var data = {
+            "back_pref": backValue + backInterval,
+            "forward_pref": forwardValue + forwardInterval
+        }
+        $.post('/admin/airtime/update-schedule-prefs', data)
+            .done(function(response) { 
+                if (response.status) {
+                    flashMessage(response.message); 
+                    return true;
+                }
+                flashMessage(response.message);
+                return false;
+        });
+    });
+
+    // update sync-shows pref
+    $('.sync-shows-switch').live('click', function() {
+        var data = {
+            "value": $('input[name=sync-shows]:checked').val()
+        }
+        $.post('/admin/airtime/update-sync-shows', data)
+            .done(function(response) { 
+                if (response.status) {
+                    flashMessage(response.message); 
+                    return true;
+                }
+                flashMessage(response.message);
+                return false;
+        });
+    });
+
+    $('#add-instance').live('click', function() {
+        var instance = {
+            'name': $('#name').val(),
+            'url': $('#url').val(),
+            'apikey': $('#apikey').val()
+        }
+
+        $.post('/admin/airtime', instance)
+            .done(function(response) { 
+                if (response.status) {
+                    flashMessage('Added new Airtime instance: ' + response.message); 
+
+                    var newRow = "<tr data-instance-id='" + response.instanceId + "'><td>" + instance.name + 
+                        "</td><td>" + instance.url + "</td><td>" + instance.apikey + 
+                        "</td><td><button class='remove-instance' data-id='" + response.instanceId + 
+                        "'>Remove</button></td>";
+                    $('#airtime-instances-table').append(newRow);
+                    return true;
+                }
+                flashMessage('Error adding new Airtime instance: ' + response.message, 'error'); 
+                return false;
+        });
+    });
+
+    $('.default-instance').live('click', function() {
+        var that = this;
+        var data = {
+            "instance_id": $(this).data('id')
+        }
+        $.post('/admin/airtime/update-default-instance', data)
+            .done(function(response) { 
+                if (response.status) {
+                    flashMessage(response.message); 
+                    location.reload();
+                    return true;
+                }
+                flashMessage('Error updateing default Airtime instance: ' + response.message, 'error'); 
+                return false;
+        });
+    });
+
+    $('.remove-instance').live('click', function() {
+        var that = this;
+        var instanceId = $(this).data('id');
+        $.post('/admin/airtime/remove/' + instanceId)
+            .done(function(response) { 
+                if (response.status) {
+                    flashMessage(response.message); 
+                    $(that).closest("tr").remove();
+                    return true;
+                }
+                flashMessage('Error adding new Airtime instance: ' + response.message, 'error'); 
+                return false;
+        });
+    });
+});
+</script>
+
+{% endblock %}
+

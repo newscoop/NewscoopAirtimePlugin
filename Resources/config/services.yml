@@ -1,0 +1,21 @@
+services:
+    newscoop_airtime_plugin.lifecyclesubscriber:
+        class: Newscoop\AirtimePluginBundle\EventListener\LifecycleSubscriber
+        arguments:
+            - @em
+            - @newscoop.scheduler
+        tags:
+            - { name: kernel.event_subscriber}
+
+    newscoop_airtime_plugin.airtime_service:
+        class: Newscoop\AirtimePluginBundle\Services\AirtimeService
+        arguments:
+            - @service_container
+
+
+    newscoop_airtime_plugin.configure_menu_listener:
+        class: Newscoop\AirtimePluginBundle\EventListener\ConfigureMenuListener
+        tags:
+          - { name: kernel.event_listener, event: newscoop_newscoop.menu_configure, method: onMenuConfigure }
+        arguments:
+            - @translator
