@@ -17,7 +17,6 @@
         <ul>
             <li><a href="#tabs-1">Instance Settings</a></li>
             <li><a href="#tabs-2">Show Settings</a></li>
-            <li><a href="#tabs-3">Track Settings</a></li>
         </ul>
 
         <div id="tabs-1" class="tab-container">
@@ -72,7 +71,7 @@
         <div id="tabs-2" class="tab-container">
 
             <h4>Sync Shows</h4>
-            <div id="show-sync-container">
+            <div id="show-sync-container" title="Automatically sync shows added on your airtime instances to this Newscoop instance.  This means that your airtime/shows.tpl file will automically include any new shows created on your Airtime instance without any additional actions.  If you turn this feature off you will have to add shows to this template manually using the smarty block function list_airtime_shows">
                 <input value="OFF" name="sync-shows" type="radio" class="sync-shows-switch" 
                     {% if sync_shows_pref == "OFF" %} checked {% endif %}>
                 <label for="show-sync-off"> OFF</label>
@@ -80,11 +79,20 @@
                     {% if sync_shows_pref == "ON" %} checked {% endif %}>
                 <label for="show-sync-on"> ON</label>
 
-                <label for="show-sync">This option allows you to automatically sync shows added on your airtime instances to this Newscoop instance.  This means that your airtime/shows.tpl file will automically include any new shows created on your Airtime instance without any additional actions.  If you turn this feature off you will have to add shows to this template manually using the smarty block function <i>list_airtime_shows</i>.</label>
+            </div>
+
+            <h4>Allow Track Playback</h4>
+            <div id="show-sync-container" title="allows for in browser track playback for all shows">
+                <input value="OFF" name="track-playback" type="radio" class="track-playback-switch" 
+                    {% if track_playback_pref == "OFF" %} checked {% endif %}>
+                <label for="track-playback-off"> OFF</label>
+                <input value="ON" name="track-playback" type="radio" class="track-playback-switch" 
+                    {% if track_playback_pref == "ON" %} checked {% endif %}>
+                <label for="track-playback-on"> ON</label>
             </div>
 
             <h4>Default Schedule Display</h4>
-            <div>
+            <div id="schedule-display-container" title="Default start and end date to display historical and future show schedules">
                 <label>Back</label>
                 <input id="back-value" type="text" size="5" value="{{ airtime_back_date|number_format }}">
                 <select id="back-interval">
@@ -138,10 +146,6 @@
             <p>(*) These values are defined in the specified Airtime instance</p>
         </div>
 
-        <div id="tabs-3" class="tab-container">
-            <h4>Allow archived show playback?</h4>
-        </div>
-
     </div><!-- end tabs -->
 
 </div>
@@ -151,6 +155,9 @@ $(function() {
 
     // initiate tabs
     $('#tabs').tabs();
+
+    // initiate tooltips
+    $( document ).tooltip();
 
     // update default schedule display dates
     $('#schedule-display-update').live('click', function() {
@@ -180,6 +187,22 @@ $(function() {
             "value": $('input[name=sync-shows]:checked').val()
         }
         $.post('/admin/airtime/update-sync-shows', data)
+            .done(function(response) { 
+                if (response.status) {
+                    flashMessage(response.message); 
+                    return true;
+                }
+                flashMessage(response.message);
+                return false;
+        });
+    });
+
+    // update track-playback pref
+    $('.track-playback-switch').live('click', function() {
+        var data = {
+            "value": $('input[name=track-playback]:checked').val()
+        }
+        $.post('/admin/airtime/update-track-playback', data)
             .done(function(response) { 
                 if (response.status) {
                     flashMessage(response.message); 

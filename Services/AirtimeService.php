@@ -31,6 +31,9 @@ class AirtimeService
     /** @var airtimeForwardDate */
     protected $airtimeForwardDate;
 
+    /** @var airtimeForwardDate */
+    protected $airtimePlaybackPref;
+
     /**
      * @param Container $container
      */
@@ -40,6 +43,7 @@ class AirtimeService
         $this->client = new \Buzz\Client\Curl();
         $this->browser = new \Buzz\Browser($this->client);
         $preferencesService = $this->container->get('system_preferences_service');
+        $this->airtimePlaybackPref = $preferencesService->AirtimeTrackPlayback;
         $now = new \DateTime();
         $backDate = clone $now;
         $backDate->sub(new \DateInterval('P'.$preferencesService->AirtimeBackDate));
@@ -54,16 +58,20 @@ class AirtimeService
      * Returns an airtime audio file for inline playback
      */
     public function getFile($instanceName, $fileId = null) {
-        $instance = $this->getInstance($instanceName);
-        $url = $instance->getUrl() . "/api/get-media";
-        $apikey = $instance->getApikey();
-        if ($fileId) {
-            $url .= "/file/" . $fileId;
-        }
-        $url .= "/api_key/" . $apikey;
+        if ($this->airtimePlaybackPref == "ON") {
+            $instance = $this->getInstance($instanceName);
+            $url = $instance->getUrl() . "/api/get-media";
+            $apikey = $instance->getApikey();
+            if ($fileId) {
+                $url .= "/file/" . $fileId;
+            }
+            $url .= "/api_key/" . $apikey;
 
-        $response =  $this->browser->post($url);
-        return $response->getContent();
+            $response =  $this->browser->post($url);
+            return $response->getContent();
+        } else {
+            return false;
+        }
     }
 
     /**

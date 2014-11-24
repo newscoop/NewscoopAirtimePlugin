@@ -32,6 +32,7 @@ class AdminController extends Controller
         $instances = $em->getRepository('Newscoop\AirtimePluginBundle\Entity\AirtimeInstance')->findAll();
         $defaultInstanceId = $preferencesService->DefaultAirtimeInstanceId;
         $syncShowsPref = $preferencesService->SyncAirtimeShows;
+        $trackPlaybackPref = $preferencesService->AirtimeTrackPlayback;
         $airtimeBackDate = $preferencesService->AirtimeBackDate;
         $airtimeForwardDate = $preferencesService->AirtimeForwardDate;
 
@@ -73,6 +74,7 @@ class AdminController extends Controller
             'instances' => $instances,
             'default_instance_id' => $defaultInstanceId,
             'sync_shows_pref' => $syncShowsPref,
+            'track_playback_pref' => $trackPlaybackPref,
             'airtime_back_date' => $airtimeBackDate,
             'airtime_forward_date' => $airtimeForwardDate,
             'shows' => $allShows
@@ -101,6 +103,17 @@ class AdminController extends Controller
         $preferencesService = $this->container->get('system_preferences_service');
         $preferencesService->set('SyncAirtimeShows', $value);
         return new JsonResponse(array('status' => true, 'message' => "Updated Airtime Show Sync"));
+    }
+
+    /**
+     * @Route("/admin/airtime/update-track-playback")
+     */
+    public function updateTrackPlaybackAction(Request $request)
+    {
+        $value = $request->request->get('value');
+        $preferencesService = $this->container->get('system_preferences_service');
+        $preferencesService->set('AirtimeTrackPlayback', $value);
+        return new JsonResponse(array('status' => true, 'message' => "Updated Airtime Track Playback"));
     }
 
     /**
