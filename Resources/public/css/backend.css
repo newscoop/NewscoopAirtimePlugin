@@ -1,0 +1,100 @@
+h4 {
+  padding: 10px 0 10px 0;
+}
+
+.form-control {
+    margin: 0px 0px 10px 0px;
+}
+
+.form-control input {
+    margin-right: 10px;
+}
+
+.plugin-container {
+    padding: 10px 10px 30px 10px;
+    border: 1px solid #ccc;
+    background-color: #FFF;
+    font-size: 12px;
+}
+
+.plugin-placeholder {
+    margin-top: 30px;
+}
+
+.actionbar {
+    float: right;
+}
+
+.button-align {
+    margin-right: 5px;
+}
+
+a.action-btn {margin-left: 5px; margin-bottom: 5px;}
+
+
+.active {
+    font-weight: bolder;
+}
+
+.selected img {
+    opacity:0.5;
+}
+
+#slider-thumbs {
+    margin-top: 20px;
+}
+
+.carousel-control {
+    padding-top: 30%;
+}
+
+a.action-btn {
+    width: 90%;
+}
+
+button.description-btn {
+    width: 100%;
+}
+
+.dynatable-processing {
+  background: #000;
+  opacity: 0.6;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.dynatable-processing span {
+  background: #FFF;
+  border: solid 1px;
+  color: #333;
+  padding: 25px;
+  font-size: 2em;
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
+}
+.dynatable-processing span img {
+  vertical-align: middle;
+}
+
+.tab-container {
+  padding: 10px 10px 10px 10px;
+}
+
+table tr th {
+ background-color: rgba(211, 211, 211, 0.24);
+}
+
+.switch-wrapper {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+}
+
+#show-sync-container {
+  width: 50%;
+  padding-left: 15px;
+}
+
+#schedule-display-container {
+  width: 50%;
+  padding-left: 15px;
+}

@@ -1,0 +1,4 @@
+newscoop_airtime_plugin:
+    resource: "@NewscoopAirtimePluginBundle/Controller"
+    type:     annotation
+    prefix:   /
