@@ -196,22 +196,156 @@ Usage:
 
 
 ### Smarty Functions
+All smarty blocks are configured to accept instanceName as the Airtime instance to query against.  If this parameter is not set the default Airtime instance as set in the admin interface will be used.
 
 blocks
 ------------------------
 * list_airtime_live_info
+  * Usage:
+```smarty
+{{ list_airtime_live_info instanceName="local" }}
+
+<p>{{ $AIRTIME_API_VERSION }}</p>
+<p>{{ $timezone }}</p>
+<p>{{ $timezoneOffset }}</p>
+
+<p>{{ $previous.name }}</p>
+<p>{{ $previous.type }}</p>
+<p>{{ $previous.starts }}</p>
+<p>{{ $previous.ends }}</p>
+
+<p>{{ $current.name }}</p>
+<p>{{ $current.type }}</p>
+<p>{{ $current.starts }}</p>
+<p>{{ $current.ends }}</p>
+
+<p>{{ $next.name }}</p>
+<p>{{ $next.type }}</p>
+<p>{{ $next.starts }}</p>
+<p>{{ $next.ends }}</p>
+
+<p>{{ $currentShow.name }}</p>
+<p>{{ $currentShow.starts }}</p>
+<p>{{ $currentShow.ends }}</p>
+<p>{{ $currentShow.id }}</p>
+<p>{{ $currentShow.instance_id }}</p>
+
+<p>{{ $nextShow.name }}</p>
+<p>{{ $nextShow.starts }}</p>
+<p>{{ $nextShow.ends }}</p>
+<p>{{ $nextShow.id }}</p>
+<p>{{ $nextShow.instance_id }}</p>
+
+{{ /list_airtime_live_info }}
+```
 * list_airtime_show_tracks
+  * Usage:
+```smarty
+{{ list_airtime_show_tracks instanceName="local" showInstanceId="4" }}
+    <div>
+        <span>{{ $track.title }}</span>
+        <span>{{ $track.artist }}</span>
+        <span>{{ $track.starts }}</span>
+        <span>{{ $track.length }}</span>
+        <span>{{ $track.file_id }}</span>
+    </div>
+{{ /list_airtime_show_tracks }}
+```
 * list_airtime_track_history
+  * Usage:
+```smarty
+{{ list_airtime_track_history instanceName="local" }}
+    <div>
+        <span>{{ $track.track_title }}</span>
+        <span>{{ $track.artist_name }}</span>
+        <span>{{ $track.instance_id }}</span>
+        <span>{{ $track.starts }}</span>
+        <span>{{ $track.ends }}</span>
+        <span>{{ $track.history_id }}</span>
+    </div>
+{{ /list_airtime_track_history }}
+```
 * list_airtime_show_history
+  * Usage:
+```smarty
+{{ list_airtime_show_history instanceName="local" }}
+    <div>
+        <span>{{ $show.name }}</span>
+        <span>{{ $show.show_id }}</span>
+        <span>{{ $show.instance_id }}</span>
+        <span>{{ $show.starts }}</span>
+        <span>{{ $show.ends }}</span>
+        <span>{{ $show.created }}</span>
+        <span>{{ $show.last_scheduled }}</span>
+        <span>{{ $show.time_filled }}</span>
+    </div>
+{{ /list_airtime_show_history }}
+```
 * list_airtime_shows
+  * Usage:
+```smarty
+<h5>Output from smarty block list_airtime_shows </h5>
+
+{{ list_airtime_shows instanceName="local" }}
+    <div>
+        <span>{{ $show.name}}</span>
+        <span>{{ $show.id}}</span>
+        <span>{{ $show.description}}</span>
+        <span>{{ $show.genre}}</span>
+        <span>{{ $show.url}}</span>
+    </div>
+{{ /list_airtime_shows }}
+
+<h5>Output from smarty block list_airtime_shows showId=4 </h5>
+
+{{ list_airtime_shows instanceName="local" showId=4 }}
+    <div>
+        <span>{{ $show.name}}</span>
+        <span>{{ $show.id}}</span>
+        <span>{{ $show.description}}</span>
+        <span>{{ $show.genre}}</span>
+        <span>{{ $show.url}}</span>
+    </div>
+{{ /list_airtime_shows }}
+```
 * list_airtime_week_info
+  * Usage:
+```smarty
+{{ list_airtime_week_info instanceName="local" }}
+    {{ foreach $day as $show }}
+        <div>
+            <span>{{ $dow }}</span>
+            <span>{{ $show.name }}</span>
+            <span>{{ $show.url }}</span>
+            <span>{{ $show.starts }}</span>
+            <span>{{ $show.ends }}</span>
+        </div>
+    {{ /foreach }}
+{{ /list_airtime_week_info }}
+```
 
 functions
 ------------------------
 
 * airtime_current_show
+  * Usage:
+```smarty
+{{ airtime_current_show instanceName="local" }}
+```
 * airtime_prev_track
+  * Usage:
+```smarty
+{{ airtime_prev_track instanceName="local" }}
+```
 * airtime_next_show
+  * Usage:
+```smarty
+{{ airtime_next_show instanceName="local" }}
+```
 * airtime_stream_url
+  * Usage:
+```smarty
+{{ airtime_stream_url instanceName="local" }}
+```
 
 
