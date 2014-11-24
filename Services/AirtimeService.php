@@ -56,6 +56,9 @@ class AirtimeService
 
     /**
      * Returns an airtime audio file for inline playback
+     *
+     * @param string $instanceName
+     * @return binary file
      */
     public function getFile($instanceName, $fileId = null) {
         if ($this->airtimePlaybackPref == "ON") {
@@ -76,6 +79,9 @@ class AirtimeService
 
     /**
      * Returns track listing for a specific show instance
+     *
+     * @param string $instanceName
+     * @return array json content
      */
     public function getShowTracks($instanceName, $showInstanceId = null) {
         $instance = $this->getInstance($instanceName);
@@ -90,6 +96,9 @@ class AirtimeService
 
     /**
      * Returns scheduled instances for a specific show
+     *
+     * @param string $instanceName
+     * @return array json content
      */
     public function getShowSchedule($instanceName, $showId = null, $start = null, $end = null) {
         $start = empty($start) ? $this->airtimeBackDate : $start;
@@ -105,6 +114,9 @@ class AirtimeService
 
     /**
      * Returns show meta data (no schedule, no track listings)
+     *
+     * @param string $instanceName
+     * @return array json content
      */
     public function getShows($instanceName, $showId = null) {
         $instance = $this->getInstance($instanceName);
@@ -125,6 +137,9 @@ class AirtimeService
 
     /**
      * Returns all track list history without show coorelation
+     *
+     * @param string $instanceName
+     * @return array json content
      */
     public function getTrackHistory($instanceName, $showInstanceId = null, $start = null, $end = null) {
         $start = empty($start) ? $this->airtimeBackDate : $start;
@@ -142,6 +157,9 @@ class AirtimeService
 
     /**
      * Returns scheduled instances without specific show correlation
+     *
+     * @param string $instanceName
+     * @return array json content
      */
     public function getShowHistory($instanceName, $start = null, $end = null) {
         $start = empty($start) ? $this->airtimeBackDate : $start;
@@ -156,6 +174,9 @@ class AirtimeService
 
     /**
      * Returns an airtime instances stream settings
+     *
+     * @param string $instanceName
+     * @return array json content
      */
     public function getStreamParameters($instanceName) {
         $instance = $this->getInstance($instanceName);
@@ -171,6 +192,9 @@ class AirtimeService
 
     /**
      * Returns schedule organized weekly for the current 2 week period
+     *
+     * @param string $instanceName
+     * @return array json content
      */
     public function getWeekInfo($instanceName) {
         $instance = $this->getInstance($instanceName);
@@ -184,6 +208,12 @@ class AirtimeService
         return $contentObj;
     }
 
+    /**
+     * Returns live show info for a given instanceName
+     *
+     * @param string $instanceName
+     * @return array json content
+     */
     public function getLiveInfo($instanceName) {
         $instance = $this->getInstance($instanceName);
         $apikey = $instance->getApikey();
@@ -194,6 +224,12 @@ class AirtimeService
 
     }
 
+    /**
+     * Returns instance object for a given instanceName
+     *
+     * @param string $instanceName
+     * @return  Newscoop\AirtimePluginBundle\Entity\AirtimeInstance
+     */
     public function getInstance($instanceName) {
         try {
             if (isset($instanceName)) {
@@ -214,7 +250,7 @@ class AirtimeService
     /**
      * Get repository for announcments entity
      *
-     * @return Newscoop\InstagramPluginBundle\Repository
+     * @return Newscoop\AirtimePluginBundle\Repository
      */
     private function getRepository()
     {
