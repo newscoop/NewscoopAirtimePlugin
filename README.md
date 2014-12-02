@@ -71,6 +71,8 @@ showId parameter is optional.
 Loads template **Resources/views/Airtime/airtime_shows.tpl** or **airtime/airtime_shows.tpl** if it exists in the loaded theme.
 for single show **Resources/views/Airtime/airtime_show.tpl** or **airtime/airtime_show.tpl** if it exists in the loaded theme.
 
+![alt tag](https://raw.github.com/thnkloud9/NewscoopAirtimePlugin/master/Resources/images/airtime_plugin_shows.png)
+
 shows.tpl Usage:
 ```smarty
 {{ foreach $shows as $show }}
@@ -83,6 +85,8 @@ shows.tpl Usage:
     </div>
 {{ /foreach }}
 ```
+
+![alt tag](https://raw.github.com/thnkloud9/NewscoopAirtimePlugin/master/Resources/images/airtime_plugin_show.png)
 
 show.tpl Usage:
 ```smarty
