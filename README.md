@@ -13,6 +13,7 @@ This Newscoop Plugin adds smarty functions and Admin tools to enable you to mana
 1. php application/console plugin:remove newscoop/airtime-plugin-bundle
 2. follow steps for manual install above
 
+![alt tag](https://raw.github.com/thnkloud9/NewscoopAirtimePlugin/master/Resources/images/airtime_plugin_admin_instance.png)
 
 
 ### Airtime Schedule View

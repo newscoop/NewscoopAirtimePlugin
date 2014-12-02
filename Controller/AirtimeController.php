@@ -117,7 +117,7 @@ class AirtimeController extends Controller
             $response->setContent($templatesService->fetchTemplate(
                 $templateFile,
                 array(
-                    'show' => $show,
+                    'show' => $show[0],
                     'showInstances' => $loadedInstances
                 )
             ));
@@ -219,7 +219,8 @@ class AirtimeController extends Controller
         $smarty = $templatesService->getSmarty();
         $smarty = $templatesService->getSmarty();
         $templateDir = array_shift($smarty->getTemplateDir());
-        $templateFile = "airtime/" . $fileName;
+        $templateFile = $templateDir . "airtime/" . $fileName;
+
         if (!file_exists($templateFile)) {
             $templateFile = __DIR__ . "/../Resources/views/Airtime/" . $fileName;
         }
