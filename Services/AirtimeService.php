@@ -99,6 +99,9 @@ class AirtimeService
         try {
             $response =  $this->browser->post($url);
             $tracks = json_decode($response->getContent(), true);
+            if (isset($tracks['error'])) {
+                $tracks = array();
+            }
         } catch (\Exception $e) {
             error_log('ERROR: ' . $e->getMessage());
             $tracks = array();
@@ -124,6 +127,9 @@ class AirtimeService
         try {
             $response =  $this->browser->get($url);
             $schedule = json_decode($response->getContent(), true);
+            if (isset($schedule['error'])) {
+                $schedule = array();
+            }
         } catch (\Exception $e) {
             error_log('ERROR: ' . $e->getMessage());
             $schedule = array();
