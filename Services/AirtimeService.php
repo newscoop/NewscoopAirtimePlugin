@@ -12,7 +12,7 @@ use Newscoop\AirtimePluginBundle\Entity\AirtimeInstance;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
- * Instagram Service
+ * Airtime Service
  */
 class AirtimeService
 {
@@ -70,8 +70,14 @@ class AirtimeService
             }
             $url .= "/api_key/" . $apikey;
 
-            $response =  $this->browser->post($url);
-            return $response->getContent();
+            try {
+                $response =  $this->browser->post($url);
+                $content = $response->getContent();
+            } catch (\Exception $e) {
+                error_log('ERROR: ' . $e->getMessage());
+                $content = null;
+            }
+            return $content;
         } else {
             return false;
         }
@@ -90,8 +96,17 @@ class AirtimeService
             $url .= "/instance_id/" . $showInstanceId;
         }
 
-        $response =  $this->browser->post($url);
-        return json_decode($response->getContent(), true);
+        try {
+            $response =  $this->browser->post($url);
+            $tracks = json_decode($response->getContent(), true);
+            if (isset($tracks['error'])) {
+                $tracks = array();
+            }
+        } catch (\Exception $e) {
+            error_log('ERROR: ' . $e->getMessage());
+            $tracks = array();
+        }
+        return $tracks; 
     }
 
     /**
@@ -108,8 +123,18 @@ class AirtimeService
         if ($showId) {
             $url .= "/show_id/" . $showId;
         }
-        $response =  $this->browser->get($url);
-        return json_decode($response->getContent(), true);
+
+        try {
+            $response =  $this->browser->get($url);
+            $schedule = json_decode($response->getContent(), true);
+            if (isset($schedule['error'])) {
+                $schedule = array();
+            }
+        } catch (\Exception $e) {
+            error_log('ERROR: ' . $e->getMessage());
+            $schedule = array();
+        }
+        return $schedule; 
     }
 
     /**
@@ -124,15 +149,16 @@ class AirtimeService
         if ($showId) {
             $url .= "/show_id/" . $showId;
         }
-        $response =  $this->browser->get($url);
-
-        // airtime api returns objects for single results and arrays for multiple
-        if ($showId) {
-            $json = "[" . $response->getContent() . "]"; 
-        } else {
-            $json = $response->getContent();
+    
+        try {
+            $response =  $this->browser->get($url);
+            $shows = json_decode($response->getContent(), true);
+        } catch (\Exception $e) {
+            error_log('ERROR: ' . $e->getMessage());
+            $shows = array();
         }
-        return json_decode($json, true);
+
+        return $shows;
     }
 
     /**
@@ -149,10 +175,16 @@ class AirtimeService
         if ($showInstanceId) {
             $url .= "/instance_id/" . $showInstanceId;
         }
-    
-        error_log($url);
-        $response =  $this->browser->get($url);
-        return json_decode($response->getContent(), true);
+        
+        try { 
+            $response =  $this->browser->get($url);
+            $history = json_decode($response->getContent(), true);
+        } catch (\Exception $e) {
+            error_log('ERROR: ' . $e->getMessage());
+            $history = array();
+        }
+        
+        return $history; 
     }
 
     /**
@@ -166,9 +198,15 @@ class AirtimeService
         $end = empty($end) ? $this->airtimeForwardDate : $end;
         $instance = $this->getInstance($instanceName);
         $url = $instance->getUrl() . "/api/show-history-feed/start/" . urlencode($start) . "/end/" . urlencode($end);
-
-        $response =  $this->browser->get($url);
-        return json_decode($response->getContent(), true);
+    
+        try {
+            $response =  $this->browser->get($url);
+            $history = json_decode($response->getContent(), true);
+        } catch (\Exception $e) {
+            error_log('ERROR: ' . $e->getMessage());
+            $history = array();
+        }
+        return $history; 
 
     }
 
@@ -183,10 +221,14 @@ class AirtimeService
         $apikey = $instance->getApikey();
         $url = $instance->getUrl() . "/api/get-stream-parameters/format/json/api_key/" . $apikey;
 
-        $response =  $this->browser->get($url);
-        $content = $response->getContent();
-
-        return json_decode($content, true);
+        try {
+            $response =  $this->browser->get($url);
+            $parameters = json_decode($response->getContent(), true);
+        } catch (\Exception $e) {
+            error_log('ERROR: ' . $e->getMessage());
+            $parameters = array();
+        }
+        return $parameters;
 
     }
 
@@ -201,11 +243,16 @@ class AirtimeService
         $apikey = $instance->getApikey();
         $url = $instance->getUrl() . "/api/week-info/format/json/api_key/" . $apikey;
 
-        $response =  $this->browser->get($url);
-        // we need to remove the stupid airtime api version line
-        $contentObj = json_decode($response->getContent(), true);
-        unset($contentObj['AIRTIME_API_VERSION']);
-        return $contentObj;
+        try {
+            $response =  $this->browser->get($url);
+            // we need to remove the stupid airtime api version line
+            $content = json_decode($response->getContent(), true);
+            unset($content['AIRTIME_API_VERSION']);
+        } catch (\Exception $e) {
+            error_log('ERROR: ' . $e->getMessage());
+            $content = array();
+        }
+        return $content;
     }
 
     /**
@@ -219,8 +266,14 @@ class AirtimeService
         $apikey = $instance->getApikey();
         $url = $instance->getUrl() . "/api/live-info/format/json/api_key/" . $apikey;
 
-        $response =  $this->browser->get($url);
-        return json_decode($response->getContent(), true);
+        try {
+            $response =  $this->browser->get($url);
+            $info = json_decode($response->getContent(), true);
+        } catch (\Exception $e) {
+            error_log('ERROR: ' . $e->getMessage());
+            $info = array();
+        }
+        return $info; 
 
     }
 

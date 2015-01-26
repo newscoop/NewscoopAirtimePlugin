@@ -88,12 +88,26 @@ class AirtimeController extends Controller
         $start = $this->_getParam('start', $request);
         $end = $this->_getParam('end', $request);
         $shows = array();
+        $allShows = array();
 
 
         if ($showId == 0) {
             if ($syncShowsPref == "ON") {
+                //$allShows = $airtimeService->getShows($instanceName);
                 $shows = $airtimeService->getShows($instanceName);
             }
+
+            // only add shows with schedules
+            /*  this takes forever to run on stations with a lot of shows
+            foreach ($allShows as $show) {
+error_log(print_r($show, true));
+                $showInstances = $airtimeService->getShowSchedule($instanceName, $show['id'], $start, $end);
+                if (!empty($showInstances)) {
+                    $shows[] = $show;
+                }
+            }
+            */
+
             $templateFile = $this->getTemplateFile('airtime_shows.tpl');
             $response->setContent($templatesService->fetchTemplate(
                 $templateFile,
@@ -107,17 +121,19 @@ class AirtimeController extends Controller
 
             // loop thourgh show isntances and get tracks
             foreach ($showInstances as $showInstance) {
-                $instanceId = $showInstance['instance_id'];
-                $instanceTracks = $airtimeService->getShowTracks($instanceName, $instanceId);
-                $showInstance['tracks'] = $instanceTracks; 
-                $loadedInstances[] = $showInstance;
+                if (isset($showInstance['instance_id'])) {
+                    $instanceId = $showInstance['instance_id'];
+                    $instanceTracks = $airtimeService->getShowTracks($instanceName, $instanceId);
+                    $showInstance['tracks'] = $instanceTracks; 
+                    $loadedInstances[] = $showInstance;
+                }
             }
 
             $templateFile = $this->getTemplateFile('airtime_show.tpl');
             $response->setContent($templatesService->fetchTemplate(
                 $templateFile,
                 array(
-                    'show' => $show,
+                    'show' => $show[0],
                     'showInstances' => $loadedInstances
                 )
             ));
@@ -219,7 +235,8 @@ class AirtimeController extends Controller
         $smarty = $templatesService->getSmarty();
         $smarty = $templatesService->getSmarty();
         $templateDir = array_shift($smarty->getTemplateDir());
-        $templateFile = "airtime/" . $fileName;
+        $templateFile = $templateDir . "airtime/" . $fileName;
+
         if (!file_exists($templateFile)) {
             $templateFile = __DIR__ . "/../Resources/views/Airtime/" . $fileName;
         }
