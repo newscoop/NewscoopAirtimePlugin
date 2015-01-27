@@ -2,8 +2,7 @@ services:
     newscoop_airtime_plugin.lifecyclesubscriber:
         class: Newscoop\AirtimePluginBundle\EventListener\LifecycleSubscriber
         arguments:
-            - @em
-            - @newscoop.scheduler
+            - @service_container
         tags:
             - { name: kernel.event_subscriber}
 
