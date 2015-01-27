@@ -31,6 +31,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
         $this->container = $container;
         $this->em = $this->container->get('em');
         $this->scheduler = $this->container->get('newscoop.scheduler');
+        $this->preferences = $this->container->get('system_preferences_service');
     }
 
     public function install(GenericEvent $event)
@@ -41,6 +42,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
         $this->preferences->set('AirtimeBackDate', '1 days');
         $this->preferences->set('AirtimeForwardDate', '1 days');
         $this->preferences->set('AirtimeTrackPlayback', 'ON');
+        $this->preferences->set('SyncAirtimeShows', 'ON');
 
         // Generate proxies for entities
         $this->em->getProxyFactory()->generateProxyClasses($this->getClasses(), __DIR__ . '/../../../../library/Proxy');
