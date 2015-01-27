@@ -39,8 +39,8 @@ class LifecycleSubscriber implements EventSubscriberInterface
         $tool = new \Doctrine\ORM\Tools\SchemaTool($this->em);
         $tool->updateSchema($this->getClasses(), true);
 
-        $this->preferences->set('AirtimeBackDate', '1 days');
-        $this->preferences->set('AirtimeForwardDate', '1 days');
+        $this->preferences->set('AirtimeBackDate', '1D');
+        $this->preferences->set('AirtimeForwardDate', '1D');
         $this->preferences->set('AirtimeTrackPlayback', 'ON');
         $this->preferences->set('SyncAirtimeShows', 'ON');
 
