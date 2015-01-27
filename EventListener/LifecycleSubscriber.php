@@ -10,29 +10,37 @@ namespace Newscoop\AirtimePluginBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Newscoop\EventDispatcher\Events\GenericEvent;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Event lifecycle management
  */
 class LifecycleSubscriber implements EventSubscriberInterface
 {
+    private $contrainer;
+
     private $em;
     
     protected $scheduler;
 
     protected $cronjobs;
 
-    public function __construct($em, $scheduler)
+    public function __construct(ContainerInterface $container)
     {
         $appDirectory = realpath(__DIR__.'/../../../../application/console');
-        $this->em = $em;
-        $this->scheduler = $scheduler;
+        $this->container = $container;
+        $this->em = $this->container->get('em');
+        $this->scheduler = $this->container->get('newscoop.scheduler');
     }
 
     public function install(GenericEvent $event)
     {
         $tool = new \Doctrine\ORM\Tools\SchemaTool($this->em);
         $tool->updateSchema($this->getClasses(), true);
+
+        $this->preferences->set('AirtimeBackDate', '1 days');
+        $this->preferences->set('AirtimeForwardDate', '1 days');
+        $this->preferences->set('AirtimeTrackPlayback', 'ON');
 
         // Generate proxies for entities
         $this->em->getProxyFactory()->generateProxyClasses($this->getClasses(), __DIR__ . '/../../../../library/Proxy');
